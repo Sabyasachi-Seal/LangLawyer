@@ -1,0 +1,7 @@
+{
+    "graphs": {
+        "legal_consultant": {
+            "path": "./src/graph/workflow.py:create_workflow"
+        }
+    }
+}
