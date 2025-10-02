@@ -1,9 +1,10 @@
 langgraph
 langchain-google-genai
-langchain-community  # For search tools
+langchain-community
 requests
 python-dotenv
 pydantic
 duckduckgo-search
 ddgs
 langgraph-studio
+langgraph-cli[inmem]
