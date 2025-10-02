@@ -1,10 +1,10 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import AIMessage  
 from langchain_core.messages import HumanMessage, ToolMessage
 from ..tools.legal_tools import tools
 from typing import Dict
 
 
+from ..prompts.researcher_prompt import get_researcher_prompt   
 from ..utils.model_utils import get_or_create_llm
 
 model = get_or_create_llm()
@@ -33,16 +33,9 @@ def researcher(state: Dict):
     """Researcher node: Reasons, calls tools if needed, summarizes."""
     messages = state["messages"]
     query = messages[0].content
-    contributions = state.get("contributions", {})
     
-    # Initial prompt for research
-    prompt = f"""
-    You are a Legal Researcher. User's query: {query}
-    Previous contributions: {contributions}
     
-    Find reliable sources (statutes, cases, official sites) using tools like legal_web_search.
-    ALWAYS use tools for fresh info. Then, summarize key findings with citations.
-    """
+    prompt = get_researcher_prompt(state)
     
     # Start with system-like message for context
     full_messages = [HumanMessage(content=prompt)] + messages[-3:]  # Last 3 for context

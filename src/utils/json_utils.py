@@ -25,7 +25,7 @@ def clean_markdown_json(content: str) -> str:
         # Fallback: Simple replace if no lines
         cleaned = re.sub(r'```json\s*|\s*```', '', content).strip()
     
-    print(f"Cleaned JSON: {cleaned}")  # Debug to verify
+    # print(f"Cleaned JSON: {cleaned}")  # Debug to verify
     return cleaned
   
 

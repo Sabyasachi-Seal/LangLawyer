@@ -26,7 +26,7 @@ def create_workflow():
     workflow.add_node("analyzer", analyzer)
     workflow.add_node("drafter", drafter)
     
-    # Edges: Supervisor -> workers -> back to supervisor (up to 3 iterations)
+    # Edges: Supervisor -> workers -> back to supervisor
     def route_to_agent(state):
         if state["next"] == "end" or state["iterations"] >= 10:
             return "synthesize"
