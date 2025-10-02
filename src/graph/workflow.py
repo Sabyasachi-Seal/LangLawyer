@@ -28,7 +28,7 @@ def create_workflow():
     
     # Edges: Supervisor -> workers -> back to supervisor (up to 3 iterations)
     def route_to_agent(state):
-        if state["next"] == "end" or state["iterations"] >= 3:
+        if state["next"] == "end" or state["iterations"] >= 10:
             return "synthesize"
         return state["next"]
     
