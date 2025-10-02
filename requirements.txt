@@ -1,6 +1,8 @@
 langgraph
 langchain-google-genai
-geopy
+langchain-community  # For search tools
 requests
 python-dotenv
 pydantic
+duckduckgo-search
+ddgs

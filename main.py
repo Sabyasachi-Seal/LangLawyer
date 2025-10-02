@@ -1,19 +1,19 @@
 from langchain_core.messages import HumanMessage
-from datetime import datetime
 from src.graph.workflow import create_workflow
+from dotenv import load_dotenv
 
+load_dotenv()
 
-# Create graph
 graph = create_workflow()
 
-# Run
-today = datetime.now().strftime('%Y-%m-%d')
-inputs = {"messages": [HumanMessage(content=f"What is the weather in Berlin on {today}?")]}
-for chunk in graph.stream(inputs, stream_mode="values"):
-    chunk["messages"][-1].pretty_print()
+# Example query
+inputs = {
+    "messages": [HumanMessage(content="What are my rights as a tenant facing eviction in California?")],
+    "contributions": {},
+    "next": "",
+    "iterations": 0
+}
 
-# Follow-up
-state = {"messages": inputs["messages"], "number_of_steps": 0}
-state["messages"].append(HumanMessage(content="Would it be warmer in Munich?"))
-for chunk in graph.stream(state, stream_mode="values"):
-    chunk["messages"][-1].pretty_print()
+for chunk in graph.stream(inputs, stream_mode="values"):
+    if "messages" in chunk:
+        chunk["messages"][-1].pretty_print()
