@@ -1,5 +1,6 @@
 from langchain_core.messages import HumanMessage, AIMessage
 from ..utils.model_utils import get_or_create_llm
+from ..utils.json_utils import clean_markdown_json, get_next_state_and_reason
 from typing import Dict
 import re
 import json
@@ -19,8 +20,12 @@ def supervisor(state: Dict):
     You are a Legal Supervisor. User's query: {query}
     Current contributions: {contributions}
     
-    Available next steps: researcher (if no sources found), analyzer (after researcher), drafter (after analyzer), end (if ready for final synthesis).
-    
+    Route based on progress:
+    - researcher: If no 'researcher' key yet (start sources).
+    - analyzer: If 'researcher' exists but no 'analyzer' (interpret next).
+    - drafter: If 'analyzer' exists but no 'drafter' (draft advice).
+    - end: Only if all three keys exist (researcher, analyzer, drafter).
+
     STRICT FORMAT - Respond EXACTLY with valid JSON (no extra text):
     {{
         "next": "one word: researcher OR analyzer OR drafter OR end",
@@ -32,6 +37,8 @@ def supervisor(state: Dict):
         "next": "researcher",
         "reason": "No prior research; need sources first."
     }}
+
+
     """
 
     response = llm.invoke([HumanMessage(content=prompt)])
@@ -40,32 +47,15 @@ def supervisor(state: Dict):
     # Debug: Print raw LLM output
     print(f"Supervisor raw LLM output: {content}")
     
-    content.replace('```', '')
-    content.replace('json', '')
+    cleaned_content = clean_markdown_json(content)
 
-    # Robust JSON parsing
-    try:
-        parsed = json.loads(content)
-        next_agent = parsed.get("next", "").lower().strip()
-        reason = parsed.get("reason", "LLM routing applied.")
-    except json.JSONDecodeError:
-        print("Warning: JSON parse failed; using regex fallback.")
-        match = re.search(r'"next"\s*:\s*"(\w+)"', content, re.IGNORECASE)
-        next_agent = match.group(1).lower() if match else "researcher"
-        reason_match = re.search(r'"reason"\s*:\s*"([^"]*)"', content, re.IGNORECASE)
-        reason = reason_match.group(1) if reason_match else "Fallback reason."# Default fallback
-
+    next_agent, reason = get_next_state_and_reason(cleaned_content)
     
     if next_agent not in ["researcher", "analyzer", "drafter", "end"]:
         print(next_agent)
 
     state["next"] = next_agent
     state["iterations"] = state.get("iterations", 0) + 1
-    
-    # Your debug prints
-    print(f"Supervisor decision: {next_agent}")
-    print(next_agent in ["researcher", "analyzer", "drafter"])
-    
     state["messages"].append(AIMessage(content=f"Supervisor routes to: {next_agent}. {reason}"))
     
     print(f"Supervisor Debug: Contributions={list(contributions.keys())}, Next={next_agent}, Iterations={state['iterations']}")
