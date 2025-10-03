@@ -35,7 +35,63 @@ jobs:
           CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r HEAD | tr '\n' ',' | sed 's/,$//')
           echo "files=$CHANGED_FILES" >> $GITHUB_OUTPUT
       
-      - name: Generate changelog entry with AI
+      - name: Get commit context
+        id: get-context
+        run: |
+          # Get the full commit details including diff
+          COMMIT_BODY=$(git log -1 --pretty=format:"%b" | head -20)
+          
+          # Get a summary of changes
+          DIFF_STAT=$(git diff --stat HEAD~1 HEAD 2>/dev/null | head -20 || echo "")
+          DIFF_SUMMARY=$(git diff HEAD~1 HEAD 2>/dev/null | head -50 || echo "")
+          
+          # Save context to files for the AI step
+          echo "$DIFF_STAT" > /tmp/diff_stat.txt
+          echo "$DIFF_SUMMARY" > /tmp/diff_summary.txt
+          echo "$COMMIT_BODY" > /tmp/commit_body.txt
+          
+          # Make outputs available
+          echo "diff_stat<<EOF" >> $GITHUB_OUTPUT
+          cat /tmp/diff_stat.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "commit_body<<EOF" >> $GITHUB_OUTPUT
+          cat /tmp/commit_body.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Call AI to generate changelog
+        id: ai-generate
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          COMMIT_MESSAGE: ${{ steps.commit-info.outputs.message }}
+          COMMIT_AUTHOR: ${{ steps.commit-info.outputs.author }}
+          CHANGED_FILES: ${{ steps.commit-info.outputs.files }}
+          DIFF_STAT: ${{ steps.get-context.outputs.diff_stat }}
+          COMMIT_BODY: ${{ steps.get-context.outputs.commit_body }}
+        run: |
+          # Try to generate with AI
+          if [ -n "$OPENAI_API_KEY" ]; then
+            if python3 .github/workflows/generate_changelog_ai.py > /tmp/ai_changelog.txt 2>/tmp/ai_error.txt; then
+              CHANGELOG_ENTRY=$(cat /tmp/ai_changelog.txt)
+              echo "ai_success=true" >> $GITHUB_OUTPUT
+              echo "✓ AI-generated changelog entry"
+            else
+              echo "✗ AI generation failed: $(cat /tmp/ai_error.txt)"
+              echo "ai_success=false" >> $GITHUB_OUTPUT
+              CHANGELOG_ENTRY=""
+            fi
+          else
+            echo "OpenAI API key not configured"
+            echo "ai_success=false" >> $GITHUB_OUTPUT
+            CHANGELOG_ENTRY=""
+          fi
+          
+          # Save the entry
+          echo "entry<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG_ENTRY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Process and finalize changelog entry
         id: generate-changelog
         uses: actions/github-script@v7
         with:
@@ -43,6 +99,8 @@ jobs:
             const commitMessage = '${{ steps.commit-info.outputs.message }}';
             const commitAuthor = '${{ steps.commit-info.outputs.author }}';
             const changedFiles = '${{ steps.commit-info.outputs.files }}'.split(',').filter(f => f);
+            const aiEntry = `${{ steps.ai-generate.outputs.entry }}`;
+            const aiSuccess = '${{ steps.ai-generate.outputs.ai_success }}' === 'true';
             
             // Skip if this is a changelog update commit to avoid infinite loop
             if (commitMessage.includes('Update changelog') || commitMessage.includes('update-changelog')) {
@@ -51,19 +109,28 @@ jobs:
               return;
             }
             
-            // Generate a structured changelog entry
-            let changelogEntry = `- **${commitMessage}** (${commitAuthor})\n`;
+            let changelogEntry = '';
             
-            // Add details about changed files if relevant
-            if (changedFiles.length > 0 && changedFiles.length < 10) {
+            // Use AI-generated entry if available
+            if (aiSuccess && aiEntry && aiEntry.trim() !== '') {
+              console.log('Using AI-generated changelog entry');
+              changelogEntry = aiEntry;
+            } else {
+              // Fallback: Generate structured changelog entry
+              console.log('Using fallback template-based generation');
+              
               const relevantFiles = changedFiles.filter(f => 
                 !f.includes('.github/workflows/update-changelog.yml') &&
                 !f.includes('node_modules') &&
                 !f.includes('.git')
               );
               
-              if (relevantFiles.length > 0) {
-                changelogEntry += `  - Modified: ${relevantFiles.join(', ')}\n`;
+              changelogEntry = `- **${commitMessage}** (${commitAuthor})`;
+              
+              if (relevantFiles.length > 0 && relevantFiles.length < 10) {
+                changelogEntry += `\n  - Modified: ${relevantFiles.join(', ')}`;
+              } else if (relevantFiles.length >= 10) {
+                changelogEntry += `\n  - Modified ${relevantFiles.length} files`;
               }
             }
             
