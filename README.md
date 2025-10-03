@@ -67,10 +67,10 @@ README.md
 
    # On Windows: Use winget or PowerShell equivalent
    ```
-
+   ```
    uv pip compile -r -v requirements.in -o
    requirements.txt --python-version 3.11
-
+   ```
    ```
 
    uv pip install -r requirements.txt
