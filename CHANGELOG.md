@@ -2,7 +2,7 @@
 ### 2025-10-03
 ### 2025-10-03
 ### 2025-10-03
-- **Update README.md** (Sabyasachi Seal)
+- **Fix formatting in README for pip commands** (Sabyasachi Seal)
   - Modified: README.md
 ### 2025-01-03
 
