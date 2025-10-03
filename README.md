@@ -112,6 +112,9 @@ We have comprehensive documentation needs tracked in issue templates. See [DOCUM
 ## Changelog
 
 ### 2025-10-03
+- **Update requirements to remove specific versioning for langgraph-cli and regenerate requirements.txt** (Sabyasachi-Seal)
+  - Modified: requirements.in, requirements.txt
+### 2025-10-03
 - **Update README.md and requirements.in for clarity and versioning** (Sabyasachi-Seal)
   - Modified: README.md, requirements.in
 ### 2025-10-03
