@@ -73,6 +73,13 @@ README.md
 * **Change Workflow Logic** : Update [workflow.py](vscode-file://vscode-app/Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html) to adjust orchestration, add new nodes, or change synthesis logic.
 * **Prompts** : Customize agent prompts in [prompts](vscode-file://vscode-app/Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html).
 
+## Changelog
+
+### 2025-10-02
+- **Update .env.example with correct API keys and add README.md for project documentation** (Sabyasachi-Seal)
+  - Added comprehensive README documentation
+  - Updated .env.example with proper API key placeholders
+
 ## License
 
 This project is licensed under the terms of the LICENSE file in the repository.
