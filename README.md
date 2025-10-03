@@ -5,18 +5,18 @@ LangLawer is an AI-powered legal assistant application built using LangGraph and
 ## Features
 
 * **Multi-Agent Workflow** : The application uses four specialized agents:
-* **Supervisor** : Manages the workflow, delegates tasks, and controls the flow between agents.
-* **Researcher** : Gathers relevant legal information and resources.
-* **Analyzer** : Interprets and analyzes the research findings.
-* **Drafter** : Prepares draft responses based on analysis.
+
+  * **Supervisor** : Manages the workflow, delegates tasks, and controls the flow between agents.
+  * **Researcher** : Gathers relevant legal information and resources.
+  * **Analyzer** : Interprets and analyzes the research findings.
+  * **Drafter** : Prepares draft responses based on analysis.
 * **Stateful Orchestration** : The workflow tracks messages, agent contributions, and iterations, ensuring a controlled and repeatable process.
 * **Automated Synthesis** : After agent contributions, the system synthesizes a final legal response, structured as:
 
-1. Overview
-2. Key Rights
-3. Steps
-4. Disclaimer
-
+  * Overview
+  * Key Rights
+  * Steps
+  * Disclaimer
 * **Extensible Design** : Easily add new agents or modify workflow logic for custom legal tasks.
 * **LangChain & LangGraph Integration** : Leverages powerful language models and graph-based orchestration for robust AI reasoning.
 
@@ -26,6 +26,9 @@ LangLawer is an AI-powered legal assistant application built using LangGraph and
 * Based on the query and workflow state, tasks are routed to Researcher, Analyzer, or Drafter.
 * Each agent contributes to the solution, looping back to the Supervisor for further coordination.
 * After sufficient iterations or upon completion, the Synthesizer compiles all contributions into a final, structured legal response.
+
+### Screenshots
+
 
 ## Project Structure
 
