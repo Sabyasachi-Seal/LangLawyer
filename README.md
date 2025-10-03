@@ -28,6 +28,8 @@ LangLawer is an AI-powered legal assistant application built using LangGraph and
 * After sufficient iterations or upon completion, the Synthesizer compiles all contributions into a final, structured legal response.
 
 ### Screenshots
+<img width="1429" height="798" alt="Screenshot 2025-10-03 at 11 20 29 AM" src="https://github.com/user-attachments/assets/10bca4c7-5d36-4307-a872-666b87c40951" />
+
 
 
 ## Project Structure
