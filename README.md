@@ -1,4 +1,4 @@
-# LangLawer
+# LangLawyer
 
 LangLawer is an AI-powered legal assistant application built using LangGraph and LangChain. It orchestrates a multi-agent workflow to analyze legal queries, conduct research, and draft comprehensive responses. The system is modular, extensible, and designed for legal professionals, researchers, and anyone needing structured legal insights.
 
