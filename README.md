@@ -53,17 +53,21 @@ README.md
 ## Getting Started
 
 1. **Install dependencies** :
+
    ```
+   pip-compile -r -v requirements.in -o 
+   requirements.txt --max-rounds 10
+   ```
+
    pip install -r requirements.txt
+
    ```
 
-```
+   ```
+2. **Configure environment** (optional):
 
-```
-
-1. **Configure environment** (optional):
    * Add API keys or secrets to a [.env](vscode-file://vscode-app/Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html) file if required.
-2. **Run the application** :
+3. **Run the application** :
 
 * Use LangGraph CLI or integrate with LangGraph Studio for visual debugging.
 
@@ -78,16 +82,18 @@ README.md
 We welcome contributions! Here's how you can help:
 
 ### Documentation Improvements
+
 We have comprehensive documentation needs tracked in issue templates. See [DOCUMENTATION_ISSUES.md](DOCUMENTATION_ISSUES.md) for a complete overview or visit our [issue templates](.github/ISSUE_TEMPLATE/) to contribute:
 
 - **Workflow Documentation** - Help document the multi-agent workflow system
-- **Setup Documentation** - Improve installation and configuration guides  
+- **Setup Documentation** - Improve installation and configuration guides
 - **Agent Documentation** - Document individual agent implementations
 - **API Documentation** - Document integrations and extensibility
 - **Testing Documentation** - Add testing guides and examples
 - **Error Handling** - Improve troubleshooting and debugging docs
 
 ### How to Contribute
+
 1. Check existing [issues](https://github.com/Sabyasachi-Seal/LangLawyer/issues)
 2. Choose an issue template from `.github/ISSUE_TEMPLATE/`
 3. Create an issue or comment on existing ones
@@ -96,12 +102,14 @@ We have comprehensive documentation needs tracked in issue templates. See [DOCUM
 ## Changelog
 
 ### 2025-01-03
+
 - **Generate documentation issues and templates** (GitHub Copilot)
   - Added comprehensive issue templates for workflow and setup documentation
   - Created DOCUMENTATION_ISSUES.md guide
   - Added 7 detailed issue templates covering all documentation needs
 
 ### 2025-30-02
+
 - **Update .env.example with correct API keys and add README.md for project documentation** (Sabyasachi-Seal)
   - Added comprehensive README documentation
   - Updated .env.example with proper API key placeholders
