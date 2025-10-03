@@ -55,15 +55,25 @@ README.md
 1. **Install dependencies** :
 
    ```
-   pip-compile -r -v requirements.in -o 
-   requirements.txt --max-rounds 10
+   # On macOS/Linux (via Homebrew or curl)
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+
+   # Or: brew install uv
+
+   # On Windows: Use winget or PowerShell equivalent
    ```
 
-   pip install -r requirements.txt
-3. **Configure environment** (optional):
+   uv pip compile -r -v requirements.in -o
+   requirements.txt --python-version 3.11
+
+   ```
+
+   uv pip install -r requirements.txt
+   ```
+2. **Configure environment** (optional):
 
    * Add API keys or secrets to a [.env](vscode-file://vscode-app/Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html) file if required.
-4. **Run the application** :
+3. **Run the application** :
 
 * Use LangGraph CLI or integrate with LangGraph Studio for visual debugging.
 
@@ -114,11 +124,11 @@ We have comprehensive documentation needs tracked in issue templates. See [DOCUM
 ### 2025-10-03
 - **Update requirements to remove specific versioning for langgraph-cli and regenerate requirements.txt** (Sabyasachi-Seal)
   - Modified: requirements.in, requirements.txt
+
 ### 2025-10-03
-- **Update README.md and requirements.in for clarity and versioning** (Sabyasachi-Seal)
-  - Modified: README.md, requirements.in
-### 2025-10-03
+
 - **Merge pull request #3 from Sabyasachi-Seal/copilot/fix-727bd4fe-edb5-41f4-b661-7191d12ee68d** (Sabyasachi Seal)
+
 ### 2025-01-03
 
 - **Generate documentation issues and templates** (GitHub Copilot)
