@@ -2,8 +2,8 @@
 ### 2025-10-03
 ### 2025-10-03
 ### 2025-10-03
-- **Create CHANGELOG.md** (Sabyasachi Seal)
-  - Modified: CHANGELOG.md
+- **Update README.md** (Sabyasachi Seal)
+  - Modified: README.md
 ### 2025-01-03
 
 - **Generate documentation issues and templates** (GitHub Copilot)
