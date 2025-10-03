@@ -122,6 +122,9 @@ We have comprehensive documentation needs tracked in issue templates. See [DOCUM
 ## Changelog
 
 ### 2025-10-03
+- **Update README.md** (Sabyasachi Seal)
+  - Modified: README.md
+### 2025-10-03
 - **Update .gitignore to exclude __pycache__ directory** (Sabyasachi-Seal)
   - Modified: README.md
 ### 2025-10-03
