@@ -77,6 +77,20 @@ README.md
 * **Change Workflow Logic** : Update [workflow.py](vscode-file://vscode-app/Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html) to adjust orchestration, add new nodes, or change synthesis logic.
 * **Prompts** : Customize agent prompts in [prompts](vscode-file://vscode-app/Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html).
 
+## Automated Changelog
+
+This repository uses an automated GitHub Actions workflow that updates the changelog in the README on every push to the main branch using **GitHub Copilot AI**. The workflow:
+
+- Extracts commit messages, author information, and code changes
+- **Uses GitHub Copilot** to generate user-friendly, concise changelog entries
+- Automatically updates the Changelog section in README.md
+- Falls back to template-based generation if AI is unavailable
+- Commits changes back to the repository
+
+GitHub Copilot analyzes your commits and generates meaningful descriptions focused on what changed and why it matters, rather than implementation details.
+
+**Note**: The workflow uses the built-in `GITHUB_TOKEN` for authentication, so no additional API keys are required. GitHub Copilot generation is automatically enabled.
+
 ## Contributing
 
 We welcome contributions! Here's how you can help:
