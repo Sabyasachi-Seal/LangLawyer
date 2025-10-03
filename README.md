@@ -75,17 +75,17 @@ README.md
 
 ## Automated Changelog
 
-This repository uses an automated GitHub Actions workflow that updates the changelog in the README on every push to the main branch using **AI-powered generation**. The workflow:
+This repository uses an automated GitHub Actions workflow that updates the changelog in the README on every push to the main branch using **GitHub Copilot AI**. The workflow:
 
 - Extracts commit messages, author information, and code changes
-- **Uses OpenAI GPT-3.5-turbo** to generate user-friendly, concise changelog entries
+- **Uses GitHub Copilot** to generate user-friendly, concise changelog entries
 - Automatically updates the Changelog section in README.md
 - Falls back to template-based generation if AI is unavailable
 - Commits changes back to the repository
 
-The AI analyzes your commits and generates meaningful descriptions focused on what changed and why it matters, rather than implementation details.
+GitHub Copilot analyzes your commits and generates meaningful descriptions focused on what changed and why it matters, rather than implementation details.
 
-**Setup**: To enable AI-powered changelog generation, add an `OPENAI_API_KEY` secret to your repository settings. Without it, the workflow will use a fallback template that includes commit messages and file lists.
+**Note**: The workflow uses the built-in `GITHUB_TOKEN` for authentication, so no additional API keys are required. GitHub Copilot generation is automatically enabled.
 
 ## Contributing
 

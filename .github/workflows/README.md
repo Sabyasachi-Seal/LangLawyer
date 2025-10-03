@@ -7,7 +7,7 @@ This directory contains automated workflows for the LangLawyer repository.
 **File:** `update-changelog.yml`
 
 ### Purpose
-Automatically updates the Changelog section in README.md whenever changes are pushed to the main or master branch using AI-powered changelog generation.
+Automatically updates the Changelog section in README.md whenever changes are pushed to the main or master branch using GitHub Copilot AI-powered changelog generation.
 
 ### How It Works
 
@@ -16,9 +16,9 @@ Automatically updates the Changelog section in README.md whenever changes are pu
    - Gets the commit message, author, and date
    - Identifies files changed in the commit
    - Extracts commit body and diff statistics
-3. **Generate Entry with AI**:
-   - **AI-Powered Generation**: Calls OpenAI API (GPT-3.5-turbo) to generate a user-friendly changelog entry
-   - The AI analyzes the commit message, changed files, and diff statistics
+3. **Generate Entry with GitHub Copilot**:
+   - **AI-Powered Generation**: Uses GitHub Copilot to generate a user-friendly changelog entry
+   - GitHub Copilot analyzes the commit message, changed files, and diff statistics
    - Generates concise, meaningful descriptions focused on what changed and why
    - **Fallback**: If AI is unavailable or fails, uses template-based generation
 4. **Update README**:
@@ -30,23 +30,18 @@ Automatically updates the Changelog section in README.md whenever changes are pu
 
 ### AI Integration
 
-The workflow uses OpenAI's GPT-3.5-turbo model to generate meaningful changelog entries. The AI:
+The workflow uses GitHub Copilot (via GitHub Models API) to generate meaningful changelog entries. GitHub Copilot:
 - Analyzes commit messages, file changes, and code diffs
 - Generates user-facing descriptions (not implementation details)
 - Creates structured, concise entries with 2-4 bullet points
 - Focuses on the impact of changes for users and developers
 
-**Configuration**: Set the `OPENAI_API_KEY` secret in your repository settings to enable AI generation.
-- Navigate to Settings → Secrets and variables → Actions → New repository secret
-- Name: `OPENAI_API_KEY`
-- Value: Your OpenAI API key
-
-**Without API Key**: The workflow will use a fallback template-based generation that includes the commit message and list of modified files.
+**Configuration**: The workflow uses the built-in `GITHUB_TOKEN` for authentication, so no additional API keys are required. GitHub Copilot generation is automatically enabled.
 
 ### Files
 
 - `update-changelog.yml` - Main workflow file
-- `generate_changelog_ai.py` - Python script that calls OpenAI API
+- `generate_changelog_ai.py` - Python script that calls GitHub Copilot API
 
 ### Safeguards
 
@@ -73,9 +68,9 @@ To modify the AI prompt or changelog format:
 - Check that the push is to `main` or `master` branch
 - Verify GitHub Actions is enabled for the repository
 
-**Issue**: AI generation fails
-- Verify `OPENAI_API_KEY` secret is set correctly
+**Issue**: GitHub Copilot generation fails
 - Check workflow logs for API error messages
+- Verify the repository has access to GitHub Models API
 - The workflow will fall back to template-based generation
 
 **Issue**: Changes not being committed
@@ -88,7 +83,7 @@ To modify the AI prompt or changelog format:
 
 ### Example Output
 
-With AI enabled:
+With GitHub Copilot enabled:
 ```markdown
 ### 2025-01-04
 - **Implement user authentication system** (Jane Developer)

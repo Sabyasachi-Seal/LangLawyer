@@ -2,11 +2,11 @@ import os
 import sys
 import json
 
-# Check if OpenAI API key is available
-api_key = os.environ.get('OPENAI_API_KEY', '')
+# Check if GitHub token is available
+github_token = os.environ.get('GITHUB_TOKEN', '')
 
-if not api_key:
-    print("OpenAI API key not configured, will use fallback")
+if not github_token:
+    print("GitHub token not configured, will use fallback")
     sys.exit(1)
 
 # Get commit information from environment
@@ -22,7 +22,7 @@ relevant_files = [f for f in changed_files if f and
                   'node_modules' not in f and 
                   '.git' not in f]
 
-# Prepare prompt for AI
+# Prepare prompt for GitHub Copilot
 prompt = f"""You are a changelog generator. Based on the following git commit information, generate a concise, user-friendly changelog entry.
 
 Commit Message: {commit_message}
@@ -53,9 +53,9 @@ try:
     import urllib.request
     import urllib.error
     
-    # Prepare request to OpenAI API
+    # Use GitHub Models API (with Copilot models)
+    # GitHub provides access to various AI models through their API
     data = {
-        "model": "gpt-3.5-turbo",
         "messages": [
             {
                 "role": "system",
@@ -67,15 +67,17 @@ try:
             }
         ],
         "temperature": 0.7,
-        "max_tokens": 200
+        "max_tokens": 200,
+        "top_p": 1
     }
     
+    # Using GitHub Models API endpoint
     request = urllib.request.Request(
-        'https://api.openai.com/v1/chat/completions',
+        'https://models.inference.ai.azure.com/chat/completions',
         data=json.dumps(data).encode('utf-8'),
         headers={
             'Content-Type': 'application/json',
-            'Authorization': f'Bearer {api_key}'
+            'Authorization': f'Bearer {github_token}'
         }
     )
     
@@ -85,5 +87,5 @@ try:
         print(changelog_entry)
         
 except Exception as e:
-    print(f"Error calling OpenAI API: {e}", file=sys.stderr)
+    print(f"Error calling GitHub Copilot API: {e}", file=sys.stderr)
     sys.exit(1)

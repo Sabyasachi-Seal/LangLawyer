@@ -59,29 +59,29 @@ jobs:
           cat /tmp/commit_body.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
       
-      - name: Call AI to generate changelog
+      - name: Call GitHub Copilot to generate changelog
         id: ai-generate
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMMIT_MESSAGE: ${{ steps.commit-info.outputs.message }}
           COMMIT_AUTHOR: ${{ steps.commit-info.outputs.author }}
           CHANGED_FILES: ${{ steps.commit-info.outputs.files }}
           DIFF_STAT: ${{ steps.get-context.outputs.diff_stat }}
           COMMIT_BODY: ${{ steps.get-context.outputs.commit_body }}
         run: |
-          # Try to generate with AI
-          if [ -n "$OPENAI_API_KEY" ]; then
+          # Try to generate with GitHub Copilot
+          if [ -n "$GITHUB_TOKEN" ]; then
             if python3 .github/workflows/generate_changelog_ai.py > /tmp/ai_changelog.txt 2>/tmp/ai_error.txt; then
               CHANGELOG_ENTRY=$(cat /tmp/ai_changelog.txt)
               echo "ai_success=true" >> $GITHUB_OUTPUT
-              echo "✓ AI-generated changelog entry"
+              echo "✓ GitHub Copilot generated changelog entry"
             else
-              echo "✗ AI generation failed: $(cat /tmp/ai_error.txt)"
+              echo "✗ GitHub Copilot generation failed: $(cat /tmp/ai_error.txt)"
               echo "ai_success=false" >> $GITHUB_OUTPUT
               CHANGELOG_ENTRY=""
             fi
           else
-            echo "OpenAI API key not configured"
+            echo "GitHub token not configured"
             echo "ai_success=false" >> $GITHUB_OUTPUT
             CHANGELOG_ENTRY=""
           fi
@@ -111,9 +111,9 @@ jobs:
             
             let changelogEntry = '';
             
-            // Use AI-generated entry if available
+            // Use GitHub Copilot-generated entry if available
             if (aiSuccess && aiEntry && aiEntry.trim() !== '') {
-              console.log('Using AI-generated changelog entry');
+              console.log('Using GitHub Copilot-generated changelog entry');
               changelogEntry = aiEntry;
             } else {
               // Fallback: Generate structured changelog entry
