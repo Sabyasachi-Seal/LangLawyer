@@ -60,14 +60,10 @@ README.md
    ```
 
    pip install -r requirements.txt
-
-   ```
-
-   ```
-2. **Configure environment** (optional):
+3. **Configure environment** (optional):
 
    * Add API keys or secrets to a [.env](vscode-file://vscode-app/Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-browser/workbench/workbench.html) file if required.
-3. **Run the application** :
+4. **Run the application** :
 
 * Use LangGraph CLI or integrate with LangGraph Studio for visual debugging.
 
