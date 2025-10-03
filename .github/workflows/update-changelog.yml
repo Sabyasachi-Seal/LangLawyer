@@ -137,40 +137,52 @@ jobs:
             core.setOutput('entry', changelogEntry);
             core.setOutput('skip', 'false');
       
-      - name: Update README with changelog
+      - name: Update CHANGELOG with changelog
         if: steps.generate-changelog.outputs.skip != 'true'
         run: |
           CHANGELOG_ENTRY="${{ steps.generate-changelog.outputs.entry }}"
           COMMIT_DATE="${{ steps.commit-info.outputs.date }}"
+          CHANGELOG_FILE="CHANGELOG.md"
           
-          # Create a temporary file
+          # Create the changelog file if it doesn't exist
+          if [ ! -f "$CHANGELOG_FILE" ]; then
+            echo -e "# Changelog\n" > "$CHANGELOG_FILE"
+          fi
+          
+          # Insert or update the day's changelog section
           temp_file=$(mktemp)
-          
-          # Read the README and insert the new changelog entry
           awk -v date="$COMMIT_DATE" -v entry="$CHANGELOG_ENTRY" '
-          /^## Changelog/ {
-            print
-            print ""
-            print "### " date
-            print entry
-            in_changelog=1
-            next
+          BEGIN { found=0; inserted=0 }
+          /^# Changelog/ { print; next }
+          /^### / {
+            if ($0 == "### " date) {
+              print
+              found=1
+              next
+            } else if (found && !inserted) {
+              print entry
+              inserted=1
+              found=0
+            }
           }
-          in_changelog && /^### / {
-            in_changelog=0
+          found { next }
+          { print }
+          END {
+            if (!found && !inserted) {
+              print ""
+              print "### " date
+              print entry
+            } else if (found && !inserted) {
+              print entry
+            }
           }
-          !in_changelog || /^### / {
-            print
-          }
-          ' README.md > "$temp_file"
-          
-          # Replace README with updated content
-          mv "$temp_file" README.md
+          ' "$CHANGELOG_FILE" > "$temp_file"
+          mv "$temp_file" "$CHANGELOG_FILE"
       
       - name: Check for changes
         id: check-changes
         run: |
-          if git diff --quiet README.md; then
+          if git diff --quiet CHANGELOG.md; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT
@@ -181,6 +193,6 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add README.md
+          git add CHANGELOG.md
           git commit -m "Update changelog with latest changes [skip ci]"
           git push
