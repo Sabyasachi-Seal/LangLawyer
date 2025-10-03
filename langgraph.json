@@ -1,7 +1,11 @@
 {
+    "dependencies": [
+        "."
+    ],
     "graphs": {
         "legal_consultant": {
-            "path": "./src/graph/workflow.py:create_workflow"
+            "path": "./main.py:graph"
         }
-    }
+    },
+    "env": ".env"
 }
