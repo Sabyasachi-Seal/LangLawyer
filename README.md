@@ -115,6 +115,8 @@ We have comprehensive documentation needs tracked in issue templates. See [DOCUM
 
 ## Changelog
 
+### 2025-10-03
+- **Merge pull request #3 from Sabyasachi-Seal/copilot/fix-727bd4fe-edb5-41f4-b661-7191d12ee68d** (Sabyasachi Seal)
 ### 2025-01-03
 
 - **Generate documentation issues and templates** (GitHub Copilot)
