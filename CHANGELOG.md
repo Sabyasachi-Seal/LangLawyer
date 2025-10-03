@@ -2,7 +2,7 @@
 ### 2025-10-03
 ### 2025-10-03
 ### 2025-10-03
-- **Update README.md** (Sabyasachi Seal)
+- **Update README.md to improve formatting and clarity of features section** (Sabyasachi-Seal)
   - Modified: README.md
 ### 2025-01-03
 
