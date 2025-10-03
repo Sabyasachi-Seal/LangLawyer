@@ -1,0 +1,119 @@
+name: Update Changelog
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Get commit information
+        id: commit-info
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=format:"%s")
+          COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an")
+          COMMIT_DATE=$(date +%Y-%m-%d)
+          
+          echo "message=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
+          echo "author=$COMMIT_AUTHOR" >> $GITHUB_OUTPUT
+          echo "date=$COMMIT_DATE" >> $GITHUB_OUTPUT
+          
+          # Get changed files in this commit
+          CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r HEAD | tr '\n' ',' | sed 's/,$//')
+          echo "files=$CHANGED_FILES" >> $GITHUB_OUTPUT
+      
+      - name: Generate changelog entry with AI
+        id: generate-changelog
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const commitMessage = '${{ steps.commit-info.outputs.message }}';
+            const commitAuthor = '${{ steps.commit-info.outputs.author }}';
+            const changedFiles = '${{ steps.commit-info.outputs.files }}'.split(',').filter(f => f);
+            
+            // Skip if this is a changelog update commit to avoid infinite loop
+            if (commitMessage.includes('Update changelog') || commitMessage.includes('update-changelog')) {
+              console.log('Skipping changelog update commit');
+              core.setOutput('skip', 'true');
+              return;
+            }
+            
+            // Generate a structured changelog entry
+            let changelogEntry = `- **${commitMessage}** (${commitAuthor})\n`;
+            
+            // Add details about changed files if relevant
+            if (changedFiles.length > 0 && changedFiles.length < 10) {
+              const relevantFiles = changedFiles.filter(f => 
+                !f.includes('.github/workflows/update-changelog.yml') &&
+                !f.includes('node_modules') &&
+                !f.includes('.git')
+              );
+              
+              if (relevantFiles.length > 0) {
+                changelogEntry += `  - Modified: ${relevantFiles.join(', ')}\n`;
+              }
+            }
+            
+            core.setOutput('entry', changelogEntry);
+            core.setOutput('skip', 'false');
+      
+      - name: Update README with changelog
+        if: steps.generate-changelog.outputs.skip != 'true'
+        run: |
+          CHANGELOG_ENTRY="${{ steps.generate-changelog.outputs.entry }}"
+          COMMIT_DATE="${{ steps.commit-info.outputs.date }}"
+          
+          # Create a temporary file
+          temp_file=$(mktemp)
+          
+          # Read the README and insert the new changelog entry
+          awk -v date="$COMMIT_DATE" -v entry="$CHANGELOG_ENTRY" '
+          /^## Changelog/ {
+            print
+            print ""
+            print "### " date
+            print entry
+            in_changelog=1
+            next
+          }
+          in_changelog && /^### / {
+            in_changelog=0
+          }
+          !in_changelog || /^### / {
+            print
+          }
+          ' README.md > "$temp_file"
+          
+          # Replace README with updated content
+          mv "$temp_file" README.md
+      
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if git diff --quiet README.md; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Commit and push changes
+        if: steps.check-changes.outputs.changed == 'true' && steps.generate-changelog.outputs.skip != 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add README.md
+          git commit -m "Update changelog with latest changes [skip ci]"
+          git push
